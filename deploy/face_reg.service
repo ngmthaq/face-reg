@@ -1,0 +1,28 @@
+# systemd unit for the edge device.
+#   installed by deploy/install.sh (or: sudo cp deploy/face_reg.service /etc/systemd/system/)
+#   sudo systemctl daemon-reload && sudo systemctl enable --now face_reg
+#   journalctl -u face_reg -f          # events + heartbeat every 60 s
+[Unit]
+Description=face_reg gate face recognition
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=face_reg
+Group=face_reg
+WorkingDirectory=/opt/face_reg
+ExecStart=/opt/face_reg/.venv/bin/python -m face_reg run --config /opt/face_reg/config.yaml
+Restart=always
+RestartSec=3
+Environment=PYTHONUNBUFFERED=1
+# keep biometric files private to the service user
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=full
+ReadWritePaths=/opt/face_reg/data
+# for relay mode "gpio" on a Pi, also add the user to the gpio group:
+# SupplementaryGroups=gpio
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,18 @@
+# biometric data — never commit
+# (data/ holds gallery, events, snapshots)
+data/
+photos/*
+!photos/.gitkeep
+*.jpg
+*.png
+*.mp4
+# large models downloaded by scripts/download_models.sh (liveness ONNX files are kept in git)
+models/face_recognition_sface_2021dec.onnx
+models/face_detection_yunet_2023mar.onnx
+.venv/
+__pycache__/
+.pytest_cache/
+
+# local tool output
+.coverage
+graphify-out/

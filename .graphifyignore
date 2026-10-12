@@ -1,0 +1,11 @@
+# biometric data - never index
+photos/
+data/
+*.jpg
+*.png
+*.mp4
+# not source
+.venv/
+models/
+.pytest_cache/
+__pycache__/

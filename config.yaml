@@ -1,0 +1,57 @@
+# face_reg configuration. Relative paths resolve against the PROJECT ROOT (the folder with face_reg/).
+device_id: gate-1
+
+camera:
+  # RTSP URL (use the camera's SUB-stream, e.g. 640x360/720p, not 4K), a video file, or 0 for the webcam
+  # source: rtsp://USER:PASSWORD@CAMERA_IP:554/Streaming/Channels/102
+  source: 0
+  process_fps: 5
+  reconnect_max_s: 30
+
+detect_width: 640          # detection runs on a frame downscaled to this width
+
+models:
+  detector: models/face_detection_yunet_2023mar.onnx
+  recognizer: models/face_recognition_sface_2021dec.onnx
+  liveness:                # averaged; set to [] to disable (testing only, photos will pass)
+    - { path: models/minifasnet_v2_2.7_80x80.onnx, scale: 2.7 }
+    - { path: models/minifasnet_v1se_4.0_80x80.onnx, scale: 4.0 }
+  providers: [CPUExecutionProvider]   # liveness runtime: OpenVINOExecutionProvider / CUDAExecutionProvider / TensorrtExecutionProvider
+
+# Starting values, not tuned values. Tune live and match on footage from the real gate (build step 7).
+thresholds:
+  detect_score: 0.9
+  nms: 0.3
+  min_face_px: 80
+  blur: 60
+  max_yaw_deg: 30
+  live: 0.8
+  match: 0.45
+  margin: 0.05
+  duplicate: 0.6           # enrollment: photo this similar to ANOTHER person is rejected
+
+tracker:
+  iou: 0.3
+  max_missed: 10
+
+decision:
+  window: 5                # vote over the last 5 good-quality frames
+  min_votes: 3
+  cooldown_s: 10
+  timeout_s: 3
+
+gallery: data/gallery/gallery.npz
+persons: data/gallery/persons.json
+data_dir: data    # events, snapshots, eval runs
+
+sinks: [jsonl, snapshot, console]    # add relay when the door output is wired
+relay:
+  mode: log                # log | gpio | command
+  gpio_pin: 17
+  command: []             # argument list, no shell. e.g. [usbrelay, HURTM_1=1]
+  off_command: []         # run after pulse_s. e.g. [usbrelay, HURTM_1=0]
+  pulse_s: 1.0
+
+retention_days: 30
+min_free_gb: 1.0
+heartbeat_s: 60
