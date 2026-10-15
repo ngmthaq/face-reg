@@ -8,13 +8,12 @@
 face-reg/
 ├── face_reg/                 # code only
 │   ├── __main__.py           # entry point: python -m face_reg
-│   ├── src/                  # code: pipeline, enroll
-│   │   ├── main.py           # CLI dispatcher (run command)
-│   │   ├── configs/          # pydantic config classes, one per file
-│   │   ├── datatypes/        # dataclasses, one per file
-│   │   ├── cli/              # run command, pipeline wiring, enroll logic, photo scanner
-│   │   ├── tools/            # sinks, overlay, export
-│   │   └── stages/           # stream, detect, quality, liveness, recognize, tracker, decide
+│   ├── main.py               # CLI dispatcher (run command)
+│   ├── configs/              # pydantic config classes, one per file
+│   ├── datatypes/            # dataclasses, one per file
+│   ├── cli/                  # run command, pipeline wiring, enroll logic, photo scanner
+│   ├── tools/                # logging, sinks, overlay, export
+│   └── stages/               # stream, detect, quality, liveness, recognize, tracker, decide
 ├── config.yaml               # all settings
 ├── data/                     # biometric — never commit, never read
 ├── photos/                   # biometric — never commit, never read
@@ -31,7 +30,7 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 ## Imports
 
 - No `__init__.py` files. `face_reg/` is a namespace package.
-- Use full import paths everywhere: `from face_reg.src.stages.detect import YuNetDetector`.
+- Use full import paths everywhere: `from face_reg.stages.detect import YuNetDetector`.
   - Do not use relative imports (`from ..datatypes import Face`).
 - Order: `from __future__ import annotations`, standard library, third-party (`cv2`, `numpy`, `yaml`, `pydantic`), project. One blank line between groups.
 - Run every command from the project root.
@@ -40,7 +39,7 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 
 - 4 spaces. Double quotes. Lines up to about 120 characters.
 - Each file starts with a docstring that says what the file does.
-  - Small config class files in `src/configs/` may skip it.
+  - Small config class files in `face_reg/configs/` may skip it.
 - Type hints on public functions. Use `X | None` and `list[int]`, with `from __future__ import annotations` so it works on Python 3.10.
 - Short end-of-line comments for units and meaning (e.g. `# seconds`, `# 5x2 landmarks`).
 
@@ -61,16 +60,16 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 
 ## Config and data
 
-- Config is pydantic models in `src/configs/`, loaded from `config.yaml`. Every field has a default.
+- Config is pydantic models in `face_reg/configs/`, loaded from `config.yaml`. Every field has a default.
 - Relative paths in `config.yaml` start from the project root. Resolve them with `cfg.path(...)`.
-- Data passed between stages uses `@dataclass` types in `src/datatypes/`.
-- One class per file in `src/configs/` and `src/datatypes/`. File name = snake_case of the class name. No `__init__.py`; import from the exact file.
+- Data passed between stages uses `@dataclass` types in `face_reg/datatypes/`.
+- One class per file in `face_reg/configs/` and `face_reg/datatypes/`. File name = snake_case of the class name. No `__init__.py`; import from the exact file.
 - Models live in `models/` at the root. No database.
 
 ## Errors and logging
 
 - Raise clear errors with a fix hint, e.g. `FileNotFoundError("YuNet model not found: ... (run: bash scripts/download_models.sh)")`.
-- Use `logging` in `src/`, not `print`.
+- Use `logging` in `face_reg/`, not `print`.
   - Only scripts you run by hand (e.g. `tools/export_liveness_onnx.py`) may use `print`.
   - `cli/enroll.py` still has one `print`. It is old code. Change it to `log` when you touch that file.
 - Logger names start with the package name (`face_reg`, `face_reg.events`, `face_reg.enroll`).

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Downloads the YuNet detector and SFace recognizer from the OpenCV model zoo into models/.
 # The liveness models (minifasnet_*.onnx) are already in models/; to rebuild them see
-# face_reg/src/tools/export_liveness_onnx.py.
+# face_reg/tools/export_liveness_onnx.py.
 # Every model is checked against a pinned SHA-256; a mismatch stops the script.
 set -euo pipefail
 cd "$(dirname "$0")/.."      # project root
@@ -44,7 +44,7 @@ fetch() {
 check_existing() {
   local f=$1 sha=$2
   if [ ! -f "$f" ]; then
-    echo "MISSING $f  -> run face_reg/src/tools/export_liveness_onnx.py"; return
+    echo "MISSING $f  -> run face_reg/tools/export_liveness_onnx.py"; return
   fi
   if [ "$(sha256_of "$f")" != "$sha" ]; then
     echo "ERROR: $f has an unexpected SHA-256 (file kept, check it)" >&2; exit 1

@@ -5,10 +5,10 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from face_reg.src.datatypes.decision import Decision
-from face_reg.src.datatypes.face import Face
-from face_reg.src.datatypes.frame_result import FrameResult
-from face_reg.src.datatypes.quality_result import QualityResult
+from face_reg.datatypes.decision import Decision
+from face_reg.datatypes.face import Face
+from face_reg.datatypes.frame_result import FrameResult
+from face_reg.datatypes.quality_result import QualityResult
 
 
 @dataclass

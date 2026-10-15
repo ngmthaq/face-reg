@@ -18,9 +18,9 @@ from typing import Protocol
 import cv2
 import numpy as np
 
-from face_reg.src.configs.config import Config
-from face_reg.src.configs.relay_cfg import RelayCfg
-from face_reg.src.datatypes.event import Event
+from face_reg.configs.config import Config
+from face_reg.configs.relay_cfg import RelayCfg
+from face_reg.datatypes.event import Event
 
 log = logging.getLogger("face_reg.events")
 

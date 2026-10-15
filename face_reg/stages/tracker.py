@@ -7,8 +7,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from face_reg.src.datatypes.face import Face
-from face_reg.src.datatypes.track import Track
+from face_reg.datatypes.face import Face
+from face_reg.datatypes.track import Track
 
 
 def iou(a: np.ndarray, b: np.ndarray) -> float:

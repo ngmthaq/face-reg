@@ -11,8 +11,8 @@ from __future__ import annotations
 
 from collections import Counter
 
-from face_reg.src.datatypes.decision import Decision
-from face_reg.src.datatypes.track import Track
+from face_reg.datatypes.decision import Decision
+from face_reg.datatypes.track import Track
 
 
 class DecisionRules:

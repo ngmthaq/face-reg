@@ -4,7 +4,7 @@ Run once on a laptop (needs PyTorch), from the project root; the edge device onl
 
     git clone https://github.com/minivision-ai/Silent-Face-Anti-Spoofing
     pip install torch onnx
-    python -m face_reg.src.tools.export_liveness_onnx --repo ../Silent-Face-Anti-Spoofing --out models/
+    python -m face_reg.tools.export_liveness_onnx --repo ../Silent-Face-Anti-Spoofing --out models/
 
 Writes models/minifasnet_v2_2.7_80x80.onnx and models/minifasnet_v1se_4.0_80x80.onnx
 (the crop scale is kept in the file name; config.yaml lists each model with its scale).

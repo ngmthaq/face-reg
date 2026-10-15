@@ -12,9 +12,9 @@ import tempfile
 import threading
 from pathlib import Path
 
-from face_reg.src.cli.enroll import IMAGE_EXT, PERSON_ID_RE, Enroller, audit, expand_photos
-from face_reg.src.configs import config as config_mod
-from face_reg.src.stages.recognize import Gallery
+from face_reg.cli.enroll import IMAGE_EXT, PERSON_ID_RE, Enroller, audit, expand_photos
+from face_reg.configs import config as config_mod
+from face_reg.stages.recognize import Gallery
 
 log = logging.getLogger("face_reg.enroll")
 

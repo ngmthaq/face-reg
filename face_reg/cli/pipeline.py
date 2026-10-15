@@ -9,21 +9,21 @@ from datetime import datetime
 
 import numpy as np
 
-from face_reg.src.cli.photo_scanner import PhotoScanner
-from face_reg.src.configs.config import Config
-from face_reg.src.datatypes.decision import Decision
-from face_reg.src.datatypes.event import Event
-from face_reg.src.datatypes.face import Face
-from face_reg.src.datatypes.frame_result import FrameResult
-from face_reg.src.datatypes.track import Track
-from face_reg.src.tools.sinks import Sink, build_sinks, cleanup_old_data, next_event_seq
-from face_reg.src.stages.decide import DecisionRules
-from face_reg.src.stages.detect import YuNetDetector
-from face_reg.src.stages.liveness import Liveness
-from face_reg.src.stages.quality import quality_check
-from face_reg.src.stages.recognize import Gallery, SFaceRecognizer
-from face_reg.src.stages.stream import LatestFrameReader, redact_source
-from face_reg.src.stages.tracker import IoUTracker
+from face_reg.cli.photo_scanner import PhotoScanner
+from face_reg.configs.config import Config
+from face_reg.datatypes.decision import Decision
+from face_reg.datatypes.event import Event
+from face_reg.datatypes.face import Face
+from face_reg.datatypes.frame_result import FrameResult
+from face_reg.datatypes.track import Track
+from face_reg.tools.sinks import Sink, build_sinks, cleanup_old_data, next_event_seq
+from face_reg.stages.decide import DecisionRules
+from face_reg.stages.detect import YuNetDetector
+from face_reg.stages.liveness import Liveness
+from face_reg.stages.quality import quality_check
+from face_reg.stages.recognize import Gallery, SFaceRecognizer
+from face_reg.stages.stream import LatestFrameReader, redact_source
+from face_reg.stages.tracker import IoUTracker
 
 log = logging.getLogger("face_reg")
 
@@ -188,7 +188,7 @@ class Pipeline:
 
     def _try_open_preview(self, window: tuple[int, int], mirror: bool):
         """Return a Preview when a display is reachable, else None (warn; the caller retries later)."""
-        from face_reg.src.tools.overlay import Preview, display_available
+        from face_reg.tools.overlay import Preview, display_available
         if not display_available():
             log.warning("no display reachable; running without preview, retry in %d s", DISPLAY_RETRY_S)
             return None

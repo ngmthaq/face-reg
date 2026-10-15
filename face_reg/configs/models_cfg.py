@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from face_reg.src.configs.liveness_model_cfg import LivenessModelCfg
+from face_reg.configs.liveness_model_cfg import LivenessModelCfg
 
 
 class ModelsCfg(BaseModel):

@@ -16,7 +16,7 @@ from typing import IO, Callable
 import cv2
 import numpy as np
 
-from face_reg.src.datatypes.face import Face
+from face_reg.datatypes.face import Face
 
 EMBED_DIM = 128
 

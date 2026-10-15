@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import argparse
 
-from face_reg.src.configs.display_cfg import parse_window
+from face_reg.configs.display_cfg import parse_window
 
 
 def add_run_parser(sub: argparse._SubParsersAction) -> argparse.ArgumentParser:
@@ -32,8 +32,8 @@ def resolve_display(args: argparse.Namespace, cfg) -> tuple[bool, tuple[int, int
 
 
 def run_command(args: argparse.Namespace, ap: argparse.ArgumentParser) -> int:
-    from face_reg.src.configs import config
-    from face_reg.src.cli.pipeline import Pipeline
+    from face_reg.configs import config
+    from face_reg.cli.pipeline import Pipeline
     cfg = config.load(args.config or config.DEFAULT_CONFIG)
     if args.source is not None:
         cfg.camera.source = int(args.source) if args.source.isdigit() else args.source

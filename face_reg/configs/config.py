@@ -12,16 +12,16 @@ from typing import Literal
 import yaml
 from pydantic import BaseModel, Field
 
-from face_reg.src.configs.camera_cfg import CameraCfg
-from face_reg.src.configs.decision_cfg import DecisionCfg
-from face_reg.src.configs.display_cfg import DisplayCfg
-from face_reg.src.configs.enroll_cfg import EnrollCfg
-from face_reg.src.configs.models_cfg import ModelsCfg
-from face_reg.src.configs.relay_cfg import RelayCfg
-from face_reg.src.configs.thresholds_cfg import ThresholdsCfg
-from face_reg.src.configs.tracker_cfg import TrackerCfg
+from face_reg.configs.camera_cfg import CameraCfg
+from face_reg.configs.decision_cfg import DecisionCfg
+from face_reg.configs.display_cfg import DisplayCfg
+from face_reg.configs.enroll_cfg import EnrollCfg
+from face_reg.configs.models_cfg import ModelsCfg
+from face_reg.configs.relay_cfg import RelayCfg
+from face_reg.configs.thresholds_cfg import ThresholdsCfg
+from face_reg.configs.tracker_cfg import TrackerCfg
 
-MODULE_DIR = Path(__file__).resolve().parents[2]      # face_reg (this file is in src/configs/)
+MODULE_DIR = Path(__file__).resolve().parents[1]      # face_reg (this file is in configs/)
 PROJECT_ROOT = MODULE_DIR.parent                       # folder that contains face_reg/
 DEFAULT_CONFIG = PROJECT_ROOT / "config.yaml"
 

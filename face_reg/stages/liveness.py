@@ -76,7 +76,7 @@ class Liveness:
             path = Path(path)
             if not path.is_file():
                 raise FileNotFoundError(
-                    f"Liveness model not found: {path}. Export it with face_reg/src/tools/export_liveness_onnx.py, "
+                    f"Liveness model not found: {path}. Export it with face_reg/tools/export_liveness_onnx.py, "
                     "or set models.liveness: [] to run without liveness (testing only).")
             self.models.append(_OnnxModel(path, scale, providers))
         self.name = "+".join(m.name for m in self.models) or "disabled"

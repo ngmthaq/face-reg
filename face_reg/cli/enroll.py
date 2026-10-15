@@ -12,11 +12,11 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from face_reg.src.configs import config as config_mod
-from face_reg.src.stages.detect import YuNetDetector
-from face_reg.src.stages.liveness import Liveness
-from face_reg.src.stages.quality import quality_check
-from face_reg.src.stages.recognize import Gallery, SFaceRecognizer
+from face_reg.configs import config as config_mod
+from face_reg.stages.detect import YuNetDetector
+from face_reg.stages.liveness import Liveness
+from face_reg.stages.quality import quality_check
+from face_reg.stages.recognize import Gallery, SFaceRecognizer
 
 IMAGE_EXT = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 ANGLES = ("front", "left", "right", "up", "down")      # file name = <angle>.jpg or <angle>_<n>.jpg

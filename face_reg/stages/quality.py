@@ -10,8 +10,8 @@ import math
 import cv2
 import numpy as np
 
-from face_reg.src.datatypes.face import Face
-from face_reg.src.datatypes.quality_result import QualityResult
+from face_reg.datatypes.face import Face
+from face_reg.datatypes.quality_result import QualityResult
 
 
 def estimate_yaw_deg(landmarks: np.ndarray) -> float:

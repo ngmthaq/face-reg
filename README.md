@@ -13,7 +13,7 @@ photo/screen attacks, and writes one event per person to a local log (plus an op
 No database, no API, no server.
 
 There are no `__init__.py` files: `face_reg/` and its sub-folders are namespace packages (Python 3.3+),
-so import with full paths (`from face_reg.src.stages.detect import YuNetDetector`) and run
+so import with full paths (`from face_reg.stages.detect import YuNetDetector`) and run
 everything from the project root.
 
 ## Quick start (laptop, macOS / Linux, Python 3.10+)
@@ -173,16 +173,15 @@ On the device: code in `/opt/face_reg`, data in `/opt/face_reg/data`, config in
 face-reg/                          project root: run every command from here
 ├── face_reg/                      code only
 │   ├── __main__.py                entry point: python -m face_reg run
-│   ├── src/                       the code
-│   │   ├── main.py                CLI dispatcher: run
-│   │   ├── cli/                   pipeline_wrapper.py (the run command)
-│   │   │                          pipeline.py (wires the stages, cooldown, timeout, heartbeat, retention cleanup)
-│   │   │                          enroll.py (gallery logic: same detect/quality/liveness checks as the stream; audit log)
-│   │   │                          photo_scanner.py (background thread: syncs the gallery with photos/)
-│   │   ├── configs/               config.yaml -> pydantic; one class per file, config.py loads it
-│   │   ├── datatypes/             Face, Track, FrameResult, Decision, ... (one class per file)
-│   │   ├── stages/                stream, detect, tracker, quality, liveness, recognize, decide
-│   │   └── tools/                 logs.py, sinks.py, overlay.py, export_liveness_onnx.py
+│   ├── main.py                    CLI dispatcher: run
+│   ├── cli/                       pipeline_wrapper.py (the run command)
+│   │                              pipeline.py (wires the stages, cooldown, timeout, heartbeat, retention cleanup)
+│   │                              enroll.py (gallery logic: same detect/quality/liveness checks as the stream; audit log)
+│   │                              photo_scanner.py (background thread: syncs the gallery with photos/)
+│   ├── configs/                   config.yaml -> pydantic; one class per file, config.py loads it
+│   ├── datatypes/                 Face, Track, FrameResult, Decision, ... (one class per file)
+│   ├── stages/                    stream, detect, tracker, quality, liveness, recognize, decide
+│   └── tools/                     logs.py, sinks.py, overlay.py, export_liveness_onnx.py
 ├── config.yaml                    settings (every threshold, camera, relay)
 ├── data/                          gallery, events, snapshots (git-ignored, biometric)
 ├── photos/                        enrollment photos, photos/<employee_id>/<angle>.jpg (git-ignored except .gitkeep)
@@ -204,7 +203,7 @@ face-reg/                          project root: run every command from here
 | Liveness    | Silent-Face-Anti-Spoofing MiniFASNetV2 (scale 2.7) + MiniFASNetV1SE (scale 4.0), exported to ONNX | Apache 2.0 |
 
 Re-check each repo and model card before commercial delivery. The liveness ONNX files were exported with
-`face_reg/src/tools/export_liveness_onnx.py` (max difference vs. PyTorch ≈ 1e-6); preprocessing matches the original repo
+`face_reg/tools/export_liveness_onnx.py` (max difference vs. PyTorch ≈ 1e-6); preprocessing matches the original repo
 (BGR, 0–255, crop scale per model, softmax class 1 = real, models averaged).
 
 RGB-only liveness stops printed photos and phone/tablet screens; it is weak against high-quality masks or
