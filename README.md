@@ -48,19 +48,20 @@ photos/
 - Keep each turn under 30°; wider turns are rejected (`POSE_TOO_WIDE`).
 - Use good light, one face per photo, and no sunglasses or mask.
 
-Then enroll:
+There is no enroll command. While `run` is running, it scans `photos/` and keeps the gallery in sync
+with the folders. The first scan runs at start, then one every `enroll.scan_interval_s` seconds
+(default 300, set in `config.yaml`; `enroll.photos_dir` and `enroll.skip_liveness` are in the same block).
+The running pipeline picks up the new gallery within 5 s after a scan.
 
-```bash
-python -m face_reg enroll --person-id emp_0001 --name "Nguyen Van A"   # reads photos/emp_0001/
-python -m face_reg enroll --list
-python -m face_reg enroll --remove emp_0001
-python -m face_reg enroll --batch      # every sub-folder of photos/ (folder name = employee_id)
-```
-
-Enrolling a person again **replaces** their previous vectors, so re-run it after fixing or adding photos.
+- A new or changed folder is enrolled again (this **replaces** that person's vectors). Results are in the log.
+- A folder that did not change is not checked again. A rejected folder is retried only after you change it.
+  If the `front` photo is rejected, the person's old vectors stay.
+- **Deleting a folder removes that person.** If `photos/` is empty or missing, everyone is removed
+  (the log shows a warning). Keep the photos on the device.
+- Folder names must be 1-64 characters of letters, digits, `_` or `-`; other folders are skipped with a warning.
+- There are no names: the folder name is the person id.
 
 These are biometric data: everything in `photos/` except `.gitkeep` is git-ignored.
-Delete the photos after enrolling; the gallery keeps only the face vectors.
 
 ### Run
 
@@ -88,7 +89,7 @@ Events go to `data/events/<date>.jsonl`, snapshots to `data/snapshots/<date>/`, 
 `data/gallery/`. All paths are set in `config.yaml` and resolve against the project root.
 
 Helper scripts in `scripts/` run the same commands from any folder and use `.venv` when it exists:
-`run.sh`, `enroll.sh`, `record.sh`, `eval.sh`. Example: `bash scripts/run.sh --show`.
+`run.sh`. Example: `bash scripts/run.sh --show`.
 
 ## Event (one JSON line per decision)
 
@@ -132,33 +133,6 @@ Helper scripts in `scripts/` run the same commands from any folder and use `.ven
 One event per track; the same `person_id` is not re-emitted for 10 s (cooldown).
 All thresholds are in `config.yaml` and are **starting values** — tune them on real gate footage.
 
-## Evaluate offline (build steps 1, 6, 7)
-
-```bash
-# photos: test_photos/<person_id>/*.jpg and test_photos/unknown/*.jpg (use photos NOT used for enrollment)
-python -m face_reg.src.tools.eval_offline photos --dir test_photos/
-
-# a recorded gate video through the full pipeline: events, time-to-decision, per-stage ms, annotated mp4
-python -m face_reg.src.tools.eval_offline video --file gate.mp4 --out gate_annotated.mp4
-python -m face_reg.src.tools.eval_offline --live 0.7 --match 0.5 video --file gate.mp4   # try thresholds
-```
-
-Eval output goes to `data/eval/<timestamp>/`, never into the real event log.
-
-## Record gate footage
-
-```bash
-python -m face_reg.src.tools.record                       # camera from config.yaml
-python -m face_reg.src.tools.record --source 0 --fps 15 --part-min 10 -v
-```
-
-Flags: `--config`, `--source` (RTSP URL, video file, or webcam index), `--fps` (default 15), `--part-min` (default 10), `-v`.
-
-Files go to `data/recordings/<YYYY-MM-DD>/<HH-MM-SS>.mp4`. A new file starts every `--part-min` minutes
-and after the camera reconnects. It stops with exit code 1 when free disk < `min_free_gb`, and with 0 on Ctrl+C or when a
-video file ends. Nothing deletes recordings automatically. They contain faces: never commit or share them.
-Replay one with `eval_offline video --file <part>.mp4`.
-
 ## Deploy on the edge device (Linux)
 
 ```bash
@@ -191,27 +165,28 @@ On the device: code in `/opt/face_reg`, data in `/opt/face_reg/data`, config in
   or `command` (any USB relay CLI). `mode: log` is a dry run.
   In `command` mode, `relay.command` and `relay.off_command` are argument lists (for example
   `[usbrelay, HURTM_1=1]`), run without a shell. The off command runs after `pulse_s`.
-- **Gallery update**: run the enroll tool on the device (or copy `data/gallery/`), the running service picks up the new gallery within 5 s, no restart needed.
+- **Gallery update**: add, change or delete a folder in `photos/` on the device. The running service scans it every `enroll.scan_interval_s` seconds and reloads the gallery within 5 s, no restart needed.
 
 ## Layout
 
 ```
 face-reg/                          project root: run every command from here
 ├── face_reg/                      code only
-│   ├── __main__.py                entry point: python -m face_reg run | enroll
+│   ├── __main__.py                entry point: python -m face_reg run
 │   ├── src/                       the code
-│   │   ├── main.py                CLI dispatcher: run | enroll
-│   │   ├── cli/                   pipeline_wrapper.py, enroll_wrapper.py (the run / enroll commands)
+│   │   ├── main.py                CLI dispatcher: run
+│   │   ├── cli/                   pipeline_wrapper.py (the run command)
 │   │   │                          pipeline.py (wires the stages, cooldown, timeout, heartbeat, retention cleanup)
 │   │   │                          enroll.py (gallery logic: same detect/quality/liveness checks as the stream; audit log)
+│   │   │                          photo_scanner.py (background thread: syncs the gallery with photos/)
 │   │   ├── configs/               config.yaml -> pydantic; one class per file, config.py loads it
 │   │   ├── datatypes/             Face, Track, FrameResult, Decision, ... (one class per file)
 │   │   ├── stages/                stream, detect, tracker, quality, liveness, recognize, decide
-│   │   └── tools/                 logs.py, sinks.py, overlay.py, eval_offline.py, record.py, export_liveness_onnx.py
+│   │   └── tools/                 logs.py, sinks.py, overlay.py, export_liveness_onnx.py
 ├── config.yaml                    settings (every threshold, camera, relay)
-├── data/                          gallery, events, snapshots, eval runs (git-ignored, biometric)
+├── data/                          gallery, events, snapshots (git-ignored, biometric)
 ├── photos/                        enrollment photos, photos/<employee_id>/<angle>.jpg (git-ignored except .gitkeep)
-├── scripts/                       shell helpers: download_models, run, enroll, record, eval
+├── scripts/                       shell helpers: download_models, run
 │   └── deploy/                    install.sh, face_reg.service (systemd, Restart=always), face_reg-xhost.desktop
 ├── models/                        ONNX models
 ├── plans/                         plan files
@@ -238,8 +213,8 @@ replays on large screens.
 ## Biometric data
 
 The gallery and snapshots are biometric data. `data/` is git-ignored, files are written
-`0600`, and the systemd unit sets `UMask=0077`. Enable disk encryption where the device supports it, delete
-enrollment photos from `photos/` after enrolling (only vectors are stored; the deploy
+`0600`, and the systemd unit sets `UMask=0077`. Enable disk encryption where the device supports it, restrict
+access to `photos/` (the app needs the photos to keep the gallery in sync; the deploy
 script does not copy this folder to the device), and collect consent at enrollment.
-`data/gallery/audit.jsonl` records who enrolled/removed whom. Snapshots and logs older than `retention_days`
+`data/gallery/audit.jsonl` records who was enrolled/removed by the scan. Snapshots and logs older than `retention_days`
 (30) are deleted automatically; snapshots stop when free disk < `min_free_gb`.

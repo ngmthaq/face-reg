@@ -44,9 +44,14 @@ display:
   show: false              # true: draw the live preview on the device's monitor (needs a desktop session)
   window: 1280x720         # max window size, frames are shrunk to fit
 
+enroll:
+  scan_interval_s: 300     # how often to scan photos/ (seconds)
+  photos_dir: photos       # photos/<person_id>/<angle>.jpg
+  skip_liveness: false     # true: no liveness check on photos (e.g. scanned ID photos)
+
 gallery: data/gallery/gallery.npz
 persons: data/gallery/persons.json
-data_dir: data    # events, snapshots, eval runs
+data_dir: data    # events, snapshots
 
 sinks: [jsonl, snapshot, console]    # add relay when the door output is wired
 relay:

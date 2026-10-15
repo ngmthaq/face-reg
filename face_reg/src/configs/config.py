@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 from face_reg.src.configs.camera_cfg import CameraCfg
 from face_reg.src.configs.decision_cfg import DecisionCfg
 from face_reg.src.configs.display_cfg import DisplayCfg
+from face_reg.src.configs.enroll_cfg import EnrollCfg
 from face_reg.src.configs.models_cfg import ModelsCfg
 from face_reg.src.configs.relay_cfg import RelayCfg
 from face_reg.src.configs.thresholds_cfg import ThresholdsCfg
@@ -23,7 +24,6 @@ from face_reg.src.configs.tracker_cfg import TrackerCfg
 MODULE_DIR = Path(__file__).resolve().parents[2]      # face_reg (this file is in src/configs/)
 PROJECT_ROOT = MODULE_DIR.parent                       # folder that contains face_reg/
 DEFAULT_CONFIG = PROJECT_ROOT / "config.yaml"
-PHOTOS_DIR = PROJECT_ROOT / "photos"                    # enrollment photos: photos/<person_id>/*.jpg
 
 
 class Config(BaseModel):
@@ -41,6 +41,7 @@ class Config(BaseModel):
         default_factory=lambda: ["jsonl", "snapshot", "console"])
     relay: RelayCfg = Field(default_factory=RelayCfg)
     display: DisplayCfg = Field(default_factory=DisplayCfg)
+    enroll: EnrollCfg = Field(default_factory=EnrollCfg)
     retention_days: int = 30
     min_free_gb: float = 1.0
     heartbeat_s: float = 60.0

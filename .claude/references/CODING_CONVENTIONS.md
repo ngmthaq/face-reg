@@ -11,13 +11,13 @@ face-reg/
 │   ├── src/                  # code: pipeline, enroll
 │   │   ├── configs/          # pydantic config classes, one per file
 │   │   ├── datatypes/        # dataclasses, one per file
-│   │   ├── cli/              # main, run, enroll commands
-│   │   ├── tools/            # sinks, overlay, offline eval, record, export
+│   │   ├── cli/              # main, run command, enroll logic, photo scanner
+│   │   ├── tools/            # sinks, overlay, export
 │   │   └── stages/           # stream, detect, quality, liveness, recognize, tracker, decide
 ├── config.yaml               # all settings
 ├── data/                     # biometric — never commit, never read
 ├── photos/                   # biometric — never commit, never read
-├── scripts/                  # shell helpers: download models, run, enroll, record, eval
+├── scripts/                  # shell helpers: download models, run
 │   └── deploy/               # install.sh, systemd service, xhost autostart
 ├── models/                   # ONNX models
 ├── plans/

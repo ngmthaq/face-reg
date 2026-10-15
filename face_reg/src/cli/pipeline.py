@@ -9,6 +9,7 @@ from datetime import datetime
 
 import numpy as np
 
+from face_reg.src.cli.photo_scanner import PhotoScanner
 from face_reg.src.configs.config import Config
 from face_reg.src.datatypes.decision import Decision
 from face_reg.src.datatypes.event import Event
@@ -65,7 +66,7 @@ class Pipeline:
 
     # ------------------------------------------------------------------ one frame
     def process(self, frame: np.ndarray, ts: float) -> list[Event]:
-        """Run every stage on one frame. `ts` is wall-clock (live) or video time (replay)."""
+        """Run every stage on one frame. `ts` is wall-clock time."""
         out: list[Event] = []
         self.frames_processed += 1
         with self._timed("detect"):
@@ -158,6 +159,8 @@ class Pipeline:
         next_display_try = 0.0
         log.info("running device=%s source=%s fps=%.1f", self.cfg.device_id,
                  redact_source(cam.source), cam.process_fps)
+        scanner = PhotoScanner(self.cfg)
+        scanner.start()
         try:
             while True:
                 t0 = time.monotonic()
@@ -178,6 +181,7 @@ class Pipeline:
         except KeyboardInterrupt:
             log.info("stopped by user")
         finally:
+            scanner.stop()
             reader.stop()
             if preview:
                 preview.close()

@@ -42,6 +42,6 @@ systemctl daemon-reload
 echo
 echo "Installed. Next:"
 echo "  1. edit $DST/config.yaml (camera.source, device_id)"
-echo "  2. enroll: cd $DST && sudo -u face_reg .venv/bin/python -m face_reg enroll --person-id emp_0001   # photos in $DST/photos/emp_0001/"
+echo "  2. enroll: put photos in $DST/photos/<id>/front.jpg (the running service scans photos/ and picks them up)"
 echo "  3. optional monitor: set display.show: true in config.yaml (desktop auto-login on :0)"
 echo "  4. sudo systemctl enable --now face_reg && journalctl -u face_reg -f"

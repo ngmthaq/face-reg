@@ -32,17 +32,17 @@ bash scripts/download_models.sh   # get the YuNet and SFace models
 |---|---|
 | `face_reg/` | The code package: `__main__.py`, `src/` |
 | `config.yaml` | All settings (thresholds, camera, relay), loaded by `face_reg/src/configs/config.py` |
-| `data/` | Runtime output: gallery, events, snapshots, eval runs (git-ignored, biometric) |
+| `data/` | Runtime output: gallery, events, snapshots (git-ignored, biometric) |
 | `photos/` | Enrollment photos `photos/<person_id>/<angle>.jpg` (git-ignored except `.gitkeep`, biometric) |
 | `scripts/deploy/` | `install.sh`, `face_reg.service` (systemd), `face_reg-xhost.desktop` |
 | `README.md` | The only README in the project. Source of truth for usage, deploy and layout |
 | `face_reg/src/stages/` | Pipeline stages: stream, detect, quality, liveness, recognize, tracker, decide |
 | `face_reg/src/configs/` | Config pydantic models, one class per file; `config.py` loads `config.yaml` |
 | `face_reg/src/datatypes/` | Data classes passed between stages, one class per file |
-| `face_reg/src/main.py` | CLI dispatcher (`run` / `enroll`), started by `__main__.py` |
-| `face_reg/src/cli/` | `pipeline_wrapper.py` (run command) + `pipeline.py` (stage wiring), `enroll_wrapper.py` (enroll command) + `enroll.py` (gallery logic) |
-| `face_reg/src/tools/` | Logging setup, sinks, overlay, offline eval, record, liveness export |
-| `scripts/` | Shell helpers: download models, run, enroll, record, eval |
+| `face_reg/src/main.py` | CLI dispatcher (`run` only), started by `__main__.py` |
+| `face_reg/src/cli/` | `pipeline_wrapper.py` (run command) + `pipeline.py` (stage wiring), `enroll.py` (gallery logic) + `photo_scanner.py` (thread that syncs the gallery with `photos/`) |
+| `face_reg/src/tools/` | Logging setup, sinks, overlay, liveness export |
+| `scripts/` | Shell helpers: download models, run |
 | `models/` | ONNX model files, shared at the root |
 | `requirements.txt` | Shared at the root |
 | `plans/` | Plan files written by the agent |
