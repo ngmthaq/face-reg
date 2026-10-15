@@ -9,9 +9,10 @@ face-reg/
 ├── face_reg/                 # code only
 │   ├── __main__.py           # entry point: python -m face_reg
 │   ├── src/                  # code: pipeline, enroll
+│   │   ├── main.py           # CLI dispatcher (run command)
 │   │   ├── configs/          # pydantic config classes, one per file
 │   │   ├── datatypes/        # dataclasses, one per file
-│   │   ├── cli/              # main, run command, enroll logic, photo scanner
+│   │   ├── cli/              # run command, pipeline wiring, enroll logic, photo scanner
 │   │   ├── tools/            # sinks, overlay, export
 │   │   └── stages/           # stream, detect, quality, liveness, recognize, tracker, decide
 ├── config.yaml               # all settings
@@ -31,7 +32,7 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 
 - No `__init__.py` files. `face_reg/` is a namespace package.
 - Use full import paths everywhere: `from face_reg.src.stages.detect import YuNetDetector`.
-  - Do not use relative imports (`from ..datatypes import Face`). Old code in `src/` still has them.
+  - Do not use relative imports (`from ..datatypes import Face`).
 - Order: `from __future__ import annotations`, standard library, third-party (`cv2`, `numpy`, `yaml`, `pydantic`), project. One blank line between groups.
 - Run every command from the project root.
 
@@ -39,6 +40,7 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 
 - 4 spaces. Double quotes. Lines up to about 120 characters.
 - Each file starts with a docstring that says what the file does.
+  - Small config class files in `src/configs/` may skip it.
 - Type hints on public functions. Use `X | None` and `list[int]`, with `from __future__ import annotations` so it works on Python 3.10.
 - Short end-of-line comments for units and meaning (e.g. `# seconds`, `# 5x2 landmarks`).
 
@@ -69,8 +71,10 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 
 - Raise clear errors with a fix hint, e.g. `FileNotFoundError("YuNet model not found: ... (run: bash scripts/download_models.sh)")`.
 - Use `logging` in `src/`, not `print`.
+  - Only scripts you run by hand (e.g. `tools/export_liveness_onnx.py`) may use `print`.
+  - `cli/enroll.py` still has one `print`. It is old code. Change it to `log` when you touch that file.
 - Logger names start with the package name (`face_reg`, `face_reg.events`, `face_reg.enroll`).
-- Only the CLI entry calls `logging.basicConfig`.
+- Only `setup_logging()` in `tools/logs.py` calls `logging.basicConfig`. Only `main.py` calls `setup_logging()`.
 
 ## Biometric data
 

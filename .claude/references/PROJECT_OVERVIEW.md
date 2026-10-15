@@ -47,7 +47,7 @@ bash scripts/download_models.sh   # get the YuNet and SFace models
 | `requirements.txt` | Shared at the root |
 | `plans/` | Plan files written by the agent |
 | `docs/face_reg/SPEC.md` | The face_reg spec. **Not in the repo yet.** |
-| `graphify-out/` | Graphify code graph (code-only build) |
+| `graphify-out/` | Graphify code graph (code-only build, git-ignored) |
 
 ### Important facts
 
@@ -57,5 +57,5 @@ bash scripts/download_models.sh   # get the YuNet and SFace models
   - Never commit them. `.gitignore` already blocks them.
   - Never read them into the chat. `.graphifyignore` also blocks them.
 - Large models (YuNet, SFace) are not in git. Liveness ONNX files are in git.
-- The local `.venv` uses Python 3.14. The code must still work on Python 3.10.
-- The folder is not a git repository yet.
+- The local `.venv` uses Python 3.13. The code must still work on Python 3.10.
+- The project is a git repository. The main branch is `main`.
