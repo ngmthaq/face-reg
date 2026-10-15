@@ -9,7 +9,7 @@ from datetime import datetime
 
 import numpy as np
 
-from face_reg.cli.photo_scanner import PhotoScanner
+from face_reg.entry.step_3_photo_scanner import PhotoScanner
 from face_reg.configs.config import Config
 from face_reg.datatypes.decision import Decision
 from face_reg.datatypes.event import Event
@@ -17,13 +17,13 @@ from face_reg.datatypes.face import Face
 from face_reg.datatypes.frame_result import FrameResult
 from face_reg.datatypes.track import Track
 from face_reg.tools.sinks import Sink, build_sinks, cleanup_old_data, next_event_seq
-from face_reg.stages.decide import DecisionRules
-from face_reg.stages.detect import YuNetDetector
-from face_reg.stages.liveness import Liveness
-from face_reg.stages.quality import quality_check
-from face_reg.stages.recognize import Gallery, SFaceRecognizer
-from face_reg.stages.stream import LatestFrameReader, redact_source
-from face_reg.stages.tracker import IoUTracker
+from face_reg.stages.step_7_decide import DecisionRules
+from face_reg.stages.step_2_detect import YuNetDetector
+from face_reg.stages.step_5_liveness import Liveness
+from face_reg.stages.step_4_quality import quality_check
+from face_reg.stages.step_6_recognize import Gallery, SFaceRecognizer
+from face_reg.stages.step_1_stream import LatestFrameReader, redact_source
+from face_reg.stages.step_3_tracker import IoUTracker
 
 log = logging.getLogger("face_reg")
 

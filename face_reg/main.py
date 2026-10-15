@@ -14,7 +14,7 @@ from face_reg.tools.logs import setup_logging
 
 def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
-    from face_reg.cli.pipeline_wrapper import add_run_parser, run_command
+    from face_reg.entry.step_1_pipeline_wrapper import add_run_parser, run_command
     ap = argparse.ArgumentParser(prog="python -m face_reg")
     sub = ap.add_subparsers(dest="cmd", required=True)
     add_run_parser(sub)

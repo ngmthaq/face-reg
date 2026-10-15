@@ -33,7 +33,7 @@ def resolve_display(args: argparse.Namespace, cfg) -> tuple[bool, tuple[int, int
 
 def run_command(args: argparse.Namespace, ap: argparse.ArgumentParser) -> int:
     from face_reg.configs import config
-    from face_reg.cli.pipeline import Pipeline
+    from face_reg.entry.step_2_pipeline import Pipeline
     cfg = config.load(args.config or config.DEFAULT_CONFIG)
     if args.source is not None:
         cfg.camera.source = int(args.source) if args.source.isdigit() else args.source

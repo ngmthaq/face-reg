@@ -11,9 +11,9 @@ face-reg/
 │   ├── main.py               # CLI dispatcher (run command)
 │   ├── configs/              # pydantic config classes, one per file
 │   ├── datatypes/            # dataclasses, one per file
-│   ├── cli/                  # run command, pipeline wiring, enroll logic, photo scanner
+│   ├── entry/                # step_N_*.py in call order: run command, pipeline, photo scanner, enroll
 │   ├── tools/                # logging, sinks, overlay, export
-│   └── stages/               # stream, detect, quality, liveness, recognize, tracker, decide
+│   └── stages/               # step_1_stream ... step_7_decide, in pipeline order
 ├── config.yaml               # all settings
 ├── data/                     # biometric — never commit, never read
 ├── photos/                   # biometric — never commit, never read
@@ -30,7 +30,7 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 ## Imports
 
 - No `__init__.py` files. `face_reg/` is a namespace package.
-- Use full import paths everywhere: `from face_reg.stages.detect import YuNetDetector`.
+- Use full import paths everywhere: `from face_reg.stages.step_2_detect import YuNetDetector`.
   - Do not use relative imports (`from ..datatypes import Face`).
 - Order: `from __future__ import annotations`, standard library, third-party (`cv2`, `numpy`, `yaml`, `pydantic`), project. One blank line between groups.
 - Run every command from the project root.
@@ -48,7 +48,7 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 - Files, functions, variables: `snake_case`.
 - Classes: `PascalCase` (`YuNetDetector`, `IoUTracker`, `DecisionRules`).
 - Constants: `UPPER_CASE` (`PROJECT_ROOT`, `DEFAULT_CONFIG`).
-- Stage files are named after the stage (`detect.py`, `liveness.py`).
+- Files in `stages/` and `entry/` are named `step_<number>_<name>.py`. The number is the order they run in (`stages/step_2_detect.py`, `entry/step_1_pipeline_wrapper.py`). When you add a step in the middle, change the numbers of the files after it.
 - Event types and reason codes are `UPPER_CASE` strings (`RECOGNIZED`, `SPOOF_SUSPECTED`, `TOO_BLURRY`).
 
 ## File order
@@ -71,7 +71,7 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 - Raise clear errors with a fix hint, e.g. `FileNotFoundError("YuNet model not found: ... (run: bash scripts/download_models.sh)")`.
 - Use `logging` in `face_reg/`, not `print`.
   - Only scripts you run by hand (e.g. `tools/export_liveness_onnx.py`) may use `print`.
-  - `cli/enroll.py` still has one `print`. It is old code. Change it to `log` when you touch that file.
+  - `entry/step_4_enroll.py` still has one `print`. It is old code. Change it to `log` when you touch that file.
 - Logger names start with the package name (`face_reg`, `face_reg.events`, `face_reg.enroll`).
 - Only `setup_logging()` in `tools/logs.py` calls `logging.basicConfig`. Only `main.py` calls `setup_logging()`.
 

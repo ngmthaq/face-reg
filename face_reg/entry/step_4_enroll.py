@@ -13,10 +13,10 @@ import cv2
 import numpy as np
 
 from face_reg.configs import config as config_mod
-from face_reg.stages.detect import YuNetDetector
-from face_reg.stages.liveness import Liveness
-from face_reg.stages.quality import quality_check
-from face_reg.stages.recognize import Gallery, SFaceRecognizer
+from face_reg.stages.step_2_detect import YuNetDetector
+from face_reg.stages.step_5_liveness import Liveness
+from face_reg.stages.step_4_quality import quality_check
+from face_reg.stages.step_6_recognize import Gallery, SFaceRecognizer
 
 IMAGE_EXT = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 ANGLES = ("front", "left", "right", "up", "down")      # file name = <angle>.jpg or <angle>_<n>.jpg

@@ -13,7 +13,7 @@ photo/screen attacks, and writes one event per person to a local log (plus an op
 No database, no API, no server.
 
 There are no `__init__.py` files: `face_reg/` and its sub-folders are namespace packages (Python 3.3+),
-so import with full paths (`from face_reg.stages.detect import YuNetDetector`) and run
+so import with full paths (`from face_reg.stages.step_2_detect import YuNetDetector`) and run
 everything from the project root.
 
 ## Quick start (laptop, macOS / Linux, Python 3.10+)
@@ -174,13 +174,15 @@ face-reg/                          project root: run every command from here
 ├── face_reg/                      code only
 │   ├── __main__.py                entry point: python -m face_reg run
 │   ├── main.py                    CLI dispatcher: run
-│   ├── cli/                       pipeline_wrapper.py (the run command)
-│   │                              pipeline.py (wires the stages, cooldown, timeout, heartbeat, retention cleanup)
-│   │                              enroll.py (gallery logic: same detect/quality/liveness checks as the stream; audit log)
-│   │                              photo_scanner.py (background thread: syncs the gallery with photos/)
+│   ├── entry/                     files in call order from main.py:
+│   │                              step_1_pipeline_wrapper.py (the run command)
+│   │                              step_2_pipeline.py (wires the stages, cooldown, timeout, heartbeat, retention cleanup)
+│   │                              step_3_photo_scanner.py (background thread: syncs the gallery with photos/)
+│   │                              step_4_enroll.py (gallery logic: same detect/quality/liveness checks as the stream; audit log)
 │   ├── configs/                   config.yaml -> pydantic; one class per file, config.py loads it
 │   ├── datatypes/                 Face, Track, FrameResult, Decision, ... (one class per file)
-│   ├── stages/                    stream, detect, tracker, quality, liveness, recognize, decide
+│   ├── stages/                    step_1_stream, step_2_detect, step_3_tracker, step_4_quality,
+│   │                              step_5_liveness, step_6_recognize, step_7_decide
 │   └── tools/                     logs.py, sinks.py, overlay.py, export_liveness_onnx.py
 ├── config.yaml                    settings (every threshold, camera, relay)
 ├── data/                          gallery, events, snapshots (git-ignored, biometric)

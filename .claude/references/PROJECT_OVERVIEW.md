@@ -36,11 +36,11 @@ bash scripts/download_models.sh   # get the YuNet and SFace models
 | `photos/` | Enrollment photos `photos/<person_id>/<angle>.jpg` (git-ignored except `.gitkeep`, biometric) |
 | `scripts/deploy/` | `install.sh`, `face_reg.service` (systemd), `face_reg-xhost.desktop` |
 | `README.md` | The only README in the project. Source of truth for usage, deploy and layout |
-| `face_reg/stages/` | Pipeline stages: stream, detect, quality, liveness, recognize, tracker, decide |
+| `face_reg/stages/` | Pipeline stages in order: `step_1_stream`, `step_2_detect`, `step_3_tracker`, `step_4_quality`, `step_5_liveness`, `step_6_recognize`, `step_7_decide` |
 | `face_reg/configs/` | Config pydantic models, one class per file; `config.py` loads `config.yaml` |
 | `face_reg/datatypes/` | Data classes passed between stages, one class per file |
 | `face_reg/main.py` | CLI dispatcher (`run` only), started by `__main__.py` |
-| `face_reg/cli/` | `pipeline_wrapper.py` (run command) + `pipeline.py` (stage wiring), `enroll.py` (gallery logic) + `photo_scanner.py` (thread that syncs the gallery with `photos/`) |
+| `face_reg/entry/` | Files in call order from `main.py`: `step_1_pipeline_wrapper.py` (run command), `step_2_pipeline.py` (stage wiring), `step_3_photo_scanner.py` (thread that syncs the gallery with `photos/`), `step_4_enroll.py` (gallery logic) |
 | `face_reg/tools/` | Logging setup, sinks, overlay, liveness export |
 | `scripts/` | Shell helpers: download models, run |
 | `models/` | ONNX model files, shared at the root |
