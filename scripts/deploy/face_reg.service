@@ -1,5 +1,5 @@
 # systemd unit for the edge device.
-#   installed by deploy/install.sh (or: sudo cp deploy/face_reg.service /etc/systemd/system/)
+#   installed by scripts/deploy/install.sh (or: sudo cp scripts/deploy/face_reg.service /etc/systemd/system/)
 #   sudo systemctl daemon-reload && sudo systemctl enable --now face_reg
 #   journalctl -u face_reg -f          # events + heartbeat every 60 s
 [Unit]
@@ -16,6 +16,8 @@ ExecStart=/opt/face_reg/.venv/bin/python -m face_reg run --config /opt/face_reg/
 Restart=always
 RestartSec=3
 Environment=PYTHONUNBUFFERED=1
+# preview window on the auto-login desktop; only used when display.show is true
+Environment=DISPLAY=:0
 # keep biometric files private to the service user
 UMask=0077
 NoNewPrivileges=true

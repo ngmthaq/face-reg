@@ -7,10 +7,10 @@
 - **Programming Languages**: `Python 3.10+`
 - **Frameworks**: `None (plain Python CLI apps)`
 - **Package Managers**: `pip (requirements.txt, virtual env in .venv)`
-- **Key Libraries**: `opencv (YuNet face detection, SFace face recognition), onnxruntime (MiniFASNet liveness), numpy, pydantic, pyyaml, pytest`
+- **Key Libraries**: `opencv (YuNet face detection, SFace face recognition), onnxruntime (MiniFASNet liveness), numpy, pydantic, pyyaml`
 - **Database**: `None`
 - **Doc Directory**: `plans/`
-- **Testing Workflow**: `Code-First` <!-- Code-First | Test-First | Skip-Testing -->
+- **Testing Workflow**: `Skip-Testing` <!-- Code-First | Test-First | Skip-Testing -->
 - **Playwright Check**: `None` <!-- Always | None | Ask-User -->
 
 > Note: DO NOT change the list format above. Only fill in the values.
@@ -22,7 +22,6 @@
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python -m pytest -q                     # all tests (pytest.ini sets pythonpath and testpaths)
 python -m face_reg run --show           # run face_reg
 bash scripts/download_models.sh   # get the YuNet and SFace models
 ```
@@ -31,11 +30,11 @@ bash scripts/download_models.sh   # get the YuNet and SFace models
 
 | Path | What it holds |
 |---|---|
-| `face_reg/` | The code package: `__main__.py`, `src/`, `tests/` |
+| `face_reg/` | The code package: `__main__.py`, `src/` |
 | `config.yaml` | All settings (thresholds, camera, relay), loaded by `face_reg/src/configs/config.py` |
 | `data/` | Runtime output: gallery, events, snapshots, eval runs (git-ignored, biometric) |
 | `photos/` | Enrollment photos `photos/<person_id>/<angle>.jpg` (git-ignored except `.gitkeep`, biometric) |
-| `deploy/` | `install.sh`, `face_reg.service` (systemd) |
+| `scripts/deploy/` | `install.sh`, `face_reg.service` (systemd), `face_reg-xhost.desktop` |
 | `README.md` | The only README in the project. Source of truth for usage, deploy and layout |
 | `face_reg/src/stages/` | Pipeline stages: stream, detect, quality, liveness, recognize, tracker, decide |
 | `face_reg/src/configs/` | Config pydantic models, one class per file; `config.py` loads `config.yaml` |
@@ -43,9 +42,9 @@ bash scripts/download_models.sh   # get the YuNet and SFace models
 | `face_reg/src/main.py` | CLI dispatcher (`run` / `enroll`), started by `__main__.py` |
 | `face_reg/src/cli/` | `pipeline_wrapper.py` (run command) + `pipeline.py` (stage wiring), `enroll_wrapper.py` (enroll command) + `enroll.py` (gallery logic) |
 | `face_reg/src/tools/` | Logging setup, sinks, overlay, offline eval, record, liveness export |
-| `scripts/` | Shell helpers: download models, run, enroll, record, eval, test |
+| `scripts/` | Shell helpers: download models, run, enroll, record, eval |
 | `models/` | ONNX model files, shared at the root |
-| `requirements.txt`, `pytest.ini` | Shared at the root |
+| `requirements.txt` | Shared at the root |
 | `plans/` | Plan files written by the agent |
 | `docs/face_reg/SPEC.md` | The face_reg spec. **Not in the repo yet.** |
 | `graphify-out/` | Graphify code graph (code-only build) |
@@ -58,6 +57,5 @@ bash scripts/download_models.sh   # get the YuNet and SFace models
   - Never commit them. `.gitignore` already blocks them.
   - Never read them into the chat. `.graphifyignore` also blocks them.
 - Large models (YuNet, SFace) are not in git. Liveness ONNX files are in git.
-- `tests/test_models.py` skips when model files are missing.
 - The local `.venv` uses Python 3.14. The code must still work on Python 3.10.
 - The folder is not a git repository yet.

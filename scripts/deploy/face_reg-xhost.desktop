@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=face_reg display access
+Exec=xhost +SI:localuser:face_reg
+NoDisplay=true

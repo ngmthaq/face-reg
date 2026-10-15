@@ -27,6 +27,7 @@ from face_reg.src.stages.tracker import IoUTracker
 log = logging.getLogger("face_reg")
 
 CLEANUP_EVERY_S = 3600
+DISPLAY_RETRY_S = 30
 GALLERY_CHECK_S = 5
 TIMER_MAX_SAMPLES = 1000
 TIMER_KEEP = 500
@@ -154,15 +155,16 @@ class Pipeline:
         self._next_cleanup = 0.0
         self._hb_frames, self._hb_faces, self._hb_t = 0, 0, time.monotonic()
         preview = None
-        if show:
-            from face_reg.src.tools.overlay import Preview  # opencv-headless has no GUI
-            preview = Preview(window=window, mirror=mirror)
+        next_display_try = 0.0
         log.info("running device=%s source=%s fps=%.1f", self.cfg.device_id,
                  redact_source(cam.source), cam.process_fps)
         try:
             while True:
                 t0 = time.monotonic()
                 self._housekeeping(t0, reader)
+                if show and preview is None and t0 >= next_display_try:
+                    preview = self._try_open_preview(window, mirror)
+                    next_display_try = t0 + DISPLAY_RETRY_S
                 frame, ts = reader.latest()
                 if frame is None:
                     if reader.ended:
@@ -179,6 +181,15 @@ class Pipeline:
             reader.stop()
             if preview:
                 preview.close()
+
+    def _try_open_preview(self, window: tuple[int, int], mirror: bool):
+        """Return a Preview when a display is reachable, else None (warn; the caller retries later)."""
+        from face_reg.src.tools.overlay import Preview, display_available
+        if not display_available():
+            log.warning("no display reachable; running without preview, retry in %d s", DISPLAY_RETRY_S)
+            return None
+        log.info("display reachable; preview window enabled")
+        return Preview(window=window, mirror=mirror)
 
     def _housekeeping(self, now: float, reader: LatestFrameReader) -> None:
         """Hourly retention cleanup, gallery change check and periodic heartbeat log."""

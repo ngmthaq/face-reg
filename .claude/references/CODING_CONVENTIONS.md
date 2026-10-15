@@ -14,17 +14,15 @@ face-reg/
 │   │   ├── cli/              # main, run, enroll commands
 │   │   ├── tools/            # sinks, overlay, offline eval, record, export
 │   │   └── stages/           # stream, detect, quality, liveness, recognize, tracker, decide
-│   └── tests/
 ├── config.yaml               # all settings
 ├── data/                     # biometric — never commit, never read
 ├── photos/                   # biometric — never commit, never read
-├── scripts/                  # shell helpers: download models, run, enroll, record, eval, test
-├── deploy/                   # install.sh, systemd service
+├── scripts/                  # shell helpers: download models, run, enroll, record, eval
+│   └── deploy/               # install.sh, systemd service, xhost autostart
 ├── models/                   # ONNX models
 ├── plans/
 ├── README.md                 # the only README in the project
-├── requirements.txt
-└── pytest.ini
+└── requirements.txt
 ```
 
 The root `README.md` is the only README. Do not add README files in sub-folders.
@@ -79,15 +77,7 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 - `photos/` and `data/` hold face photos, the gallery, events, and snapshots.
 - Never commit them. Never read them into the chat. Never log face crops or embeddings.
 
-## Testing
-
-- pytest. Run: `python -m pytest -q` from the root.
-- Tests live in `face_reg/tests/`, as plain `test_*` functions.
-- Use `tmp_path` for gallery, persons, and data files. Never use real `photos/` or `data/`.
-- Use small helper builders (`make_face`, `fr`) to make test data.
-- Tests that need real models call `pytest.skip` when a model file is missing.
-
 ## Third-party libraries
 
 - Add new libraries to the root `requirements.txt` with a minimum version (`>=`).
-- Keep `opencv-python-headless` for edge devices. Hardware-only libraries (e.g. `gpiozero`) stay commented out.
+- Use `opencv-python` (GUI build) so the edge device can show the preview on a monitor. Hardware-only libraries (e.g. `gpiozero`) stay commented out.

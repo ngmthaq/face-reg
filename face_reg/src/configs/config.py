@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 
 from face_reg.src.configs.camera_cfg import CameraCfg
 from face_reg.src.configs.decision_cfg import DecisionCfg
+from face_reg.src.configs.display_cfg import DisplayCfg
 from face_reg.src.configs.models_cfg import ModelsCfg
 from face_reg.src.configs.relay_cfg import RelayCfg
 from face_reg.src.configs.thresholds_cfg import ThresholdsCfg
@@ -39,6 +40,7 @@ class Config(BaseModel):
     sinks: list[Literal["jsonl", "snapshot", "console", "relay"]] = Field(
         default_factory=lambda: ["jsonl", "snapshot", "console"])
     relay: RelayCfg = Field(default_factory=RelayCfg)
+    display: DisplayCfg = Field(default_factory=DisplayCfg)
     retention_days: int = 30
     min_free_gb: float = 1.0
     heartbeat_s: float = 60.0

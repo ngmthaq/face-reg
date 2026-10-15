@@ -14,7 +14,7 @@ No database, no API, no server.
 
 There are no `__init__.py` files: `face_reg/` and its sub-folders are namespace packages (Python 3.3+),
 so import with full paths (`from face_reg.src.stages.detect import YuNetDetector`) and run
-everything from the project root. `pytest.ini` puts the root on the path for tests.
+everything from the project root.
 
 ## Quick start (laptop, macOS / Linux, Python 3.10+)
 
@@ -22,10 +22,7 @@ everything from the project root. `pytest.ini` puts the root on the path for tes
 cd face-reg                          # the project root; run every command from here
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-pip install opencv-python            # optional: enables the --show preview window
 bash scripts/download_models.sh      # YuNet + SFace (~39 MB) into models/; liveness models are already there
-
-python -m pytest -q                  # all tests (pytest.ini) (+ model smoke test)
 ```
 
 ### Enrollment photos
@@ -71,6 +68,7 @@ Run on the webcam (`camera.source: 0`) with a preview window:
 
 ```bash
 python -m face_reg run --show                       # window fits in 1280x720 by default
+python -m face_reg run --no-show                    # force the window off (overrides display.show: true)
 python -m face_reg run --show --window 960x540        # smaller window
 python -m face_reg run --show --no-mirror            # webcam preview is mirrored by default
 python -m face_reg run --source "rtsp://USER:PASSWORD@CAMERA_IP:554/Streaming/Channels/102"
@@ -80,12 +78,17 @@ python -m face_reg run --source recording.mp4
 The `--show` preview is mirrored for webcams, like a video call; use `--no-mirror` / `--mirror` to override.
 Detection and saved images are never mirrored.
 
+`--show` / `--no-show` and `--window WxH` override the `display:` block in `config.yaml`
+(`display.show`, default `false`; `display.window`, default `1280x720`). Without a flag the config value is used.
+If you had an older `.venv` with the headless build, run `pip uninstall opencv-python-headless`
+and then `pip install --force-reinstall opencv-python` once.
+
 On macOS the first webcam run asks for camera permission for your terminal app.
 Events go to `data/events/<date>.jsonl`, snapshots to `data/snapshots/<date>/`, the gallery to
 `data/gallery/`. All paths are set in `config.yaml` and resolve against the project root.
 
 Helper scripts in `scripts/` run the same commands from any folder and use `.venv` when it exists:
-`run.sh`, `enroll.sh`, `record.sh`, `eval.sh`, `test.sh`. Example: `bash scripts/run.sh --show`.
+`run.sh`, `enroll.sh`, `record.sh`, `eval.sh`. Example: `bash scripts/run.sh --show`.
 
 ## Event (one JSON line per decision)
 
@@ -159,11 +162,24 @@ Replay one with `eval_offline video --file <part>.mp4`.
 ## Deploy on the edge device (Linux)
 
 ```bash
-sudo bash deploy/install.sh                             # -> /opt/face_reg, venv, models, systemd unit
+sudo bash scripts/deploy/install.sh                     # -> /opt/face_reg, apt libs, venv, models, systemd unit
 sudo nano /opt/face_reg/config.yaml            # camera.source (sub-stream!), device_id
 sudo systemctl enable --now face_reg
 journalctl -u face_reg -f                      # EVENT lines + HEARTBEAT every 60 s (fps, faces, camera state, ms/stage)
 ```
+
+### Monitor on the edge device
+
+To see the live preview on a monitor plugged into the device:
+
+1. Use a desktop with auto-login on display `:0` (X11, or Wayland with XWayland).
+2. Set `display.show: true` in `/opt/face_reg/config.yaml`.
+3. Run `sudo systemctl restart face_reg`.
+
+The installer adds an autostart entry that runs `xhost +SI:localuser:face_reg`, so only the `face_reg`
+user may draw on the desktop. It takes effect at the next desktop login. If no display can be reached,
+the app logs a warning, keeps recognizing, and tries again every 30 s. Pressing q or Esc in the window stops the app
+(systemd restarts it after 3 s).
 
 On the device: code in `/opt/face_reg`, data in `/opt/face_reg/data`, config in
 `/opt/face_reg/config.yaml`, service and user `face_reg`. The installer does not copy
@@ -192,16 +208,14 @@ face-reg/                          project root: run every command from here
 │   │   ├── datatypes/             Face, Track, FrameResult, Decision, ... (one class per file)
 │   │   ├── stages/                stream, detect, tracker, quality, liveness, recognize, decide
 │   │   └── tools/                 logs.py, sinks.py, overlay.py, eval_offline.py, record.py, export_liveness_onnx.py
-│   └── tests/                     unit tests + model integration test
 ├── config.yaml                    settings (every threshold, camera, relay)
 ├── data/                          gallery, events, snapshots, eval runs (git-ignored, biometric)
 ├── photos/                        enrollment photos, photos/<employee_id>/<angle>.jpg (git-ignored except .gitkeep)
-├── scripts/                       shell helpers: download_models, run, enroll, record, eval, test
-├── deploy/                        install.sh, face_reg.service (systemd, Restart=always)
+├── scripts/                       shell helpers: download_models, run, enroll, record, eval
+│   └── deploy/                    install.sh, face_reg.service (systemd, Restart=always), face_reg-xhost.desktop
 ├── models/                        ONNX models
 ├── plans/                         plan files
 ├── README.md                      the only README
-├── pytest.ini
 ├── requirements.txt
 └── .gitignore
 ```

@@ -40,6 +40,10 @@ decision:
   cooldown_s: 10
   timeout_s: 3
 
+display:
+  show: false              # true: draw the live preview on the device's monitor (needs a desktop session)
+  window: 1280x720         # max window size, frames are shrunk to fit
+
 gallery: data/gallery/gallery.npz
 persons: data/gallery/persons.json
 data_dir: data    # events, snapshots, eval runs

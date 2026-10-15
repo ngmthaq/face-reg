@@ -1,6 +1,10 @@
 """Draws boxes and scores for --show and for recordings made by eval_offline.py."""
 from __future__ import annotations
 
+import os
+import subprocess
+import sys
+
 import cv2
 import numpy as np
 
@@ -58,6 +62,24 @@ def draw_overlay(frame: np.ndarray, tracker, gallery=None, camera_state: str = "
         cv2.putText(img, camera_state, (10, int(24 * scale)), cv2.FONT_HERSHEY_SIMPLEX, 0.6 * scale,
                     (255, 255, 255), max(1, int(1.5 * scale)), cv2.LINE_AA)
     return img
+
+
+_PROBE_CODE = ("import cv2; cv2.namedWindow('face_reg_probe'); cv2.waitKey(1); "
+               "cv2.destroyAllWindows()")
+
+
+def display_available() -> bool:
+    """True when an OpenCV window can be opened. Never raises."""
+    if sys.platform.startswith("linux") and not (
+            os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
+        return False
+    # Qt in opencv-python aborts the whole process when it cannot reach a display,
+    # so the check runs in a child process.
+    try:
+        r = subprocess.run([sys.executable, "-c", _PROBE_CODE], capture_output=True, timeout=10)
+    except (subprocess.TimeoutExpired, OSError):
+        return False
+    return r.returncode == 0
 
 
 class Preview:

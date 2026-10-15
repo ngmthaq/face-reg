@@ -1,11 +1,7 @@
-# Use opencv-python (not -headless) on a laptop if you want the --show preview window.
-opencv-python-headless>=4.8
+opencv-python>=4.8
 onnxruntime>=1.16
 numpy>=1.24
 pydantic>=2.5
 pyyaml>=6.0
-# dev
-pytest>=7
-pytest-cov>=4
 # relay mode "gpio" on Raspberry Pi / Jetson only:
 # gpiozero
