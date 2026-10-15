@@ -17,7 +17,6 @@ from face_reg.configs.decision_cfg import DecisionCfg
 from face_reg.configs.display_cfg import DisplayCfg
 from face_reg.configs.enroll_cfg import EnrollCfg
 from face_reg.configs.models_cfg import ModelsCfg
-from face_reg.configs.relay_cfg import RelayCfg
 from face_reg.configs.thresholds_cfg import ThresholdsCfg
 from face_reg.configs.tracker_cfg import TrackerCfg
 
@@ -37,9 +36,8 @@ class Config(BaseModel):
     gallery: str = "data/gallery/gallery.npz"
     persons: str = "data/gallery/persons.json"
     data_dir: str = "data"
-    sinks: list[Literal["jsonl", "snapshot", "console", "relay"]] = Field(
+    sinks: list[Literal["jsonl", "snapshot", "console"]] = Field(
         default_factory=lambda: ["jsonl", "snapshot", "console"])
-    relay: RelayCfg = Field(default_factory=RelayCfg)
     display: DisplayCfg = Field(default_factory=DisplayCfg)
     enroll: EnrollCfg = Field(default_factory=EnrollCfg)
     retention_days: int = 30

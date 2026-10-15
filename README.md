@@ -5,11 +5,11 @@ README in the project.
 
 ```
 camera stream → face detection → quality check → liveness → recognition → decision → sinks
-   (thread)       YuNet            size/blur/yaw    MiniFASNet   SFace + NumPy    5-frame vote   jsonl / snapshot / console / relay
+   (thread)       YuNet            size/blur/yaw    MiniFASNet   SFace + NumPy    5-frame vote   jsonl / snapshot / console
 ```
 
 One Python app on the edge device: it reads one camera, recognizes enrolled people, rejects
-photo/screen attacks, and writes one event per person to a local log (plus an optional door relay).
+photo/screen attacks, and writes one event per person to a local log.
 No database, no API, no server.
 
 There are no `__init__.py` files: `face_reg/` and its sub-folders are namespace packages (Python 3.3+),
@@ -161,10 +161,6 @@ On the device: code in `/opt/face_reg`, data in `/opt/face_reg/data`, config in
 
 - **Speed**: use the camera sub-stream (640×360/720p), not 4K. If fps falls short: lower `process_fps` to 3,
   use `onnxruntime-openvino` (Intel) or NVIDIA's onnxruntime-gpu (Jetson) and set `models.providers`.
-- **Door output**: add `relay` to `sinks` and set `relay.mode` to `gpio` (Pi/Jetson, `pip install gpiozero`)
-  or `command` (any USB relay CLI). `mode: log` is a dry run.
-  In `command` mode, `relay.command` and `relay.off_command` are argument lists (for example
-  `[usbrelay, HURTM_1=1]`), run without a shell. The off command runs after `pulse_s`.
 - **Gallery update**: add, change or delete a folder in `photos/` on the device. The running service scans it every `enroll.scan_interval_s` seconds and reloads the gallery within 5 s, no restart needed.
 
 ## Layout
@@ -184,7 +180,7 @@ face-reg/                          project root: run every command from here
 │   ├── stages/                    step_1_stream, step_2_detect, step_3_tracker, step_4_quality,
 │   │                              step_5_liveness, step_6_recognize, step_7_decide
 │   └── tools/                     logs.py, sinks.py, overlay.py, export_liveness_onnx.py
-├── config.yaml                    settings (every threshold, camera, relay)
+├── config.yaml                    settings (every threshold, camera, sinks)
 ├── data/                          gallery, events, snapshots (git-ignored, biometric)
 ├── photos/                        enrollment photos, photos/<employee_id>/<angle>.jpg (git-ignored except .gitkeep)
 ├── scripts/                       shell helpers: download_models, run

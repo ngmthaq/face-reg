@@ -8,9 +8,6 @@ from __future__ import annotations
 import json
 import logging
 import shutil
-import subprocess
-import threading
-import time
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Protocol
@@ -19,7 +16,6 @@ import cv2
 import numpy as np
 
 from face_reg.configs.config import Config
-from face_reg.configs.relay_cfg import RelayCfg
 from face_reg.datatypes.event import Event
 
 log = logging.getLogger("face_reg.events")
@@ -88,46 +84,10 @@ class ConsoleSink:
                  s["live"], s["frames_voted"])
 
 
-class RelaySink:
-    """Pulses the door output for ~1 s on RECOGNIZED. Non-blocking."""
-
-    def __init__(self, cfg: RelayCfg):
-        self.cfg = cfg
-        self._dev = None
-        if cfg.mode == "gpio":
-            from gpiozero import OutputDevice  # installed only on Pi/Jetson
-            self._dev = OutputDevice(cfg.gpio_pin, active_high=True, initial_value=False)
-
-    def emit(self, event: Event, frame: np.ndarray | None) -> None:
-        if event.type != "RECOGNIZED":
-            return
-        threading.Thread(target=self._pulse, daemon=True).start()
-
-    def _pulse(self) -> None:
-        try:
-            if self.cfg.mode == "gpio":
-                self._dev.on()
-                time.sleep(self.cfg.pulse_s)
-                self._dev.off()
-            elif self.cfg.mode == "command" and self.cfg.command:
-                try:
-                    subprocess.run(self.cfg.command, shell=False, timeout=10, check=False)
-                    time.sleep(self.cfg.pulse_s)
-                finally:
-                    # always release the door, even if the on command failed
-                    if self.cfg.off_command:
-                        subprocess.run(self.cfg.off_command, shell=False, timeout=10, check=False)
-            else:
-                log.info("RELAY pulse %.1fs (mode=log, no hardware)", self.cfg.pulse_s)
-        except Exception:
-            log.exception("relay pulse failed")
-
-
 SINK_FACTORIES = {      # snapshot first: it fills event.snapshot
     "snapshot": lambda cfg, data_dir: SnapshotSink(data_dir, cfg.min_free_gb),
     "jsonl": lambda cfg, data_dir: JsonlSink(data_dir),
     "console": lambda cfg, data_dir: ConsoleSink(),
-    "relay": lambda cfg, data_dir: RelaySink(cfg.relay),
 }
 
 

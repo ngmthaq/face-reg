@@ -31,7 +31,7 @@ bash scripts/download_models.sh   # get the YuNet and SFace models
 | Path | What it holds |
 |---|---|
 | `face_reg/` | The code package: `__main__.py`, `main.py`, and the folders below |
-| `config.yaml` | All settings (thresholds, camera, relay), loaded by `face_reg/configs/config.py` |
+| `config.yaml` | All settings (thresholds, camera, sinks), loaded by `face_reg/configs/config.py` |
 | `data/` | Runtime output: gallery, events, snapshots (git-ignored, biometric) |
 | `photos/` | Enrollment photos `photos/<person_id>/<angle>.jpg` (git-ignored except `.gitkeep`, biometric) |
 | `scripts/deploy/` | `install.sh`, `face_reg.service` (systemd), `face_reg-xhost.desktop` |

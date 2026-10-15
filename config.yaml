@@ -53,13 +53,7 @@ gallery: data/gallery/gallery.npz
 persons: data/gallery/persons.json
 data_dir: data    # events, snapshots
 
-sinks: [jsonl, snapshot, console]    # add relay when the door output is wired
-relay:
-  mode: log                # log | gpio | command
-  gpio_pin: 17
-  command: []             # argument list, no shell. e.g. [usbrelay, HURTM_1=1]
-  off_command: []         # run after pulse_s. e.g. [usbrelay, HURTM_1=0]
-  pulse_s: 1.0
+sinks: [jsonl, snapshot, console]
 
 retention_days: 30
 min_free_gb: 1.0

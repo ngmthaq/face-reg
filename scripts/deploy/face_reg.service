@@ -23,8 +23,6 @@ UMask=0077
 NoNewPrivileges=true
 ProtectSystem=full
 ReadWritePaths=/opt/face_reg/data
-# for relay mode "gpio" on a Pi, also add the user to the gpio group:
-# SupplementaryGroups=gpio
 
 [Install]
 WantedBy=multi-user.target

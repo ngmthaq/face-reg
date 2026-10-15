@@ -83,4 +83,4 @@ The root `README.md` is the only README. Do not add README files in sub-folders.
 ## Third-party libraries
 
 - Add new libraries to the root `requirements.txt` with a minimum version (`>=`).
-- Use `opencv-python` (GUI build) so the edge device can show the preview on a monitor. Hardware-only libraries (e.g. `gpiozero`) stay commented out.
+- Use `opencv-python` (GUI build) so the edge device can show the preview on a monitor.
