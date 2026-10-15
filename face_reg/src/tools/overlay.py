@@ -1,4 +1,4 @@
-"""Draws boxes and scores for --show and for recordings made by eval_offline.py."""
+"""Draws boxes and scores for --show."""
 from __future__ import annotations
 
 import os
